@@ -17,8 +17,8 @@ Thumbs.db
 *.swp
 
 # Données (formatrice fournit via Discord mardi 9h)
-data/*.csv
-data/*.json
-data/*.log
-data/*.zip
+#data/*.csv
+#data/*.json
+#data/*.log
+#data/*.zip
 !data/.gitkeep
