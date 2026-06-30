@@ -42,6 +42,7 @@ Ce que je comprends qu'il cherche vraiment : améliorer la prise de décision op
 4. Existe-t-il un dictionnaire de données officiel (définitions statut, line_id, règles de saisie ERP) ?
 5. Le format des logs machines est-il stable dans le temps ou susceptible de changer selon version système/atelier ?
 6. Les rapports techniques sont-ils produits de manière systématique après chaque incident, ou seulement sur certains cas jugés critiques ?
+7. Comment une non-conformité est-elle définie et validée chez Acerox (seuils, contrôle qualité, source de vérité), et à quel moment ce label est-il disponible dans les données ?
 
 ## 6. Limites de cette note
 
