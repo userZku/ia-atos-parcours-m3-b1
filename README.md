@@ -18,6 +18,10 @@
 - [Notebook EDA (version travaillée)](./notebooks/M3-B1_theo.ipynb)
 - [Notebook template initial](./notebooks/M3-B1_template.ipynb)
 
+### Notebook bonus
+
+- [Notebook préparation RAG sur les rapports techniques](./notebooks/M3-B1_rag_prepa_theo.ipynb)
+
 ---
 
 ## 🚀 Démarrage (4 commandes)
@@ -55,7 +59,9 @@ M3-B1-<client>-<prenom>/
 │   ├── erp_export.json                  # fourni mardi 9h
 │   └── logs_machines.log                # fourni mardi 9h
 ├── notebooks/
-│   └── M3-B1_template.ipynb             # exploration rapide 3 sources
+│   ├── M3-B1_template.ipynb             # exploration rapide 3 sources
+│   ├── M3-B1_theo.ipynb                 # notebook EDA complété
+│   └── M3-B1_rag_prepa_theo.ipynb       # bonus RAG sur les rapports techniques
 ├── ressources/                          # 📚 mini-cours d'appui
 │   ├── README.md
 │   ├── 01_Entretien_client_essentiel.md
