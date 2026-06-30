@@ -1,52 +1,52 @@
-# Note d'identification des sources — Acerox Metallurgie
+# Note d'identification des sources — Acerox Métallurgie
 
-> Document remis a Sebastien Marchand (chef de projet industrialisation Acerox).
+> Document remis à Sébastien Marchand (chef de projet industrialisation Acerox).
 
-> Public vise: decideur metier non technique.
+> Public visé : décideur métier non technique.
 
-> Auteur: Theo / Copilot - Date: 30/06/2026
+> Auteur : Théo / Copilot - Date : 30/06/2026
 
 ## 1. Contexte
 
-Acerox Metallurgie exploite un modele existant de prediction des defauts qualite en production. Dans le cadre de la mission FastIA, l'objectif est d'identifier les sources de donnees les plus utiles pour enrichir ce modele, sans engager a ce stade un chantier technique complet. Trois sources ont ete fournies (capteurs IoT, export ERP, logs machines). Cette note vise a donner une vision claire de leur valeur metier, de leur qualite apparente et des points de vigilance RGPD avant de lancer l'implementation d'ingestion.
+Acerox Métallurgie exploite un modèle existant de prédiction des défauts qualité en production. Dans le cadre de la mission FastIA, l'objectif est d'identifier les sources de données les plus utiles pour enrichir ce modèle, sans engager à ce stade un chantier technique complet. Trois sources ont été fournies (capteurs IoT, export ERP, logs machines). Cette note vise à donner une vision claire de leur valeur métier, de leur qualité apparente et des points de vigilance RGPD avant de lancer l'implémentation d'ingestion.
 
-## 2. Demande metier reformulee
+## 2. Demande métier reformulée
 
-Ce que Sebastien a demande: enrichir le modele existant avec de nouvelles donnees pour mieux traiter les defauts qualite.
+Ce que Sébastien a demandé : enrichir le modèle existant avec de nouvelles données pour mieux traiter les défauts qualité.
 
-Ce que je comprends qu'il cherche vraiment: ameliorer la prise de decision operationnelle (maintenance, supervision de ligne, priorisation des actions correctives) en detectant plus tot les situations a risque de non-conformite, avec un focus probable sur les lignes et sites les plus sensibles.
+Ce que je comprends qu'il cherche vraiment : améliorer la prise de décision opérationnelle (maintenance, supervision de ligne, priorisation des actions correctives) en détectant plus tôt les situations à risque de non-conformité, avec un focus probable sur les lignes et sites les plus sensibles.
 
 ## 3. Inventaire des sources
 
-| Source | Format | Volume | Frequence | Qualite observee | Risques RGPD | Pertinence metier |
+| Source | Format | Volume | Fréquence | Qualité observée | Risques RGPD | Pertinence métier |
 |---|---|---|---|---|---|---|
-| capteurs_iot.csv | CSV | 51 000 lignes, 7 colonnes, ~10,59 Mo en RAM | Continue (mesures horodatees sur la periode fournie) | Qualite globalement bonne; 749 valeurs manquantes sur vibration_mms (1,47%); 1 000 doublons exacts | Faible a moyen: pas de donnee personnelle directe, mais identifiants techniques (sensor_id, line_id) recoupables avec d'autres sources | Haute: source la plus directement liee aux conditions machine et aux defauts |
-| erp_export.json | JSON | 2 000 lignes, 9 colonnes, ~0,74 Mo en RAM | Batch (rythme exact a confirmer, probablement quotidien) | Structure coherente; 109 valeurs manquantes sur ouvrier_id (5,45%) | Moyen: ouvrier_id est pseudonymise mais potentiellement re-identifiable par croisement (planning RH, logs, horaires) | Haute: apporte le contexte ordre/statut/quantite necessaire a l'analyse metier |
-| logs_machines.log | Texte semi-structure | 30 000 lignes, 1,83 Mo fichier (~3,20 Mo en RAM apres chargement) | Continue | 0 ligne vide, 1 doublon; repartition INFO/WARN/ERROR exploitable; parsing plus pousse a prevoir ensuite | Faible a moyen: pas d'email/telephone/IP detectes, mais presence de marqueurs d'identifiants (user/employee/id/token) dans 425 lignes | Moyenne: utile pour corroborer les incidents, mais valeur dependante du parsing |
+| capteurs_iot.csv | CSV | 51 000 lignes, 7 colonnes, ~10,59 Mo en RAM | Continue (mesures horodatées sur la période fournie) | Qualité globalement bonne ; 749 valeurs manquantes sur vibration_mms (1,47%) ; 1 000 doublons exacts | Faible à moyen : pas de donnée personnelle directe, mais identifiants techniques (sensor_id, line_id) recoupables avec d'autres sources | Haute : source la plus directement liée aux conditions machine et aux défauts |
+| erp_export.json | JSON | 2 000 lignes, 9 colonnes, ~0,74 Mo en RAM | Batch (rythme exact à confirmer, probablement quotidien) | Structure cohérente ; 109 valeurs manquantes sur ouvrier_id (5,45%) | Moyen : ouvrier_id est pseudonymisé mais potentiellement ré-identifiable par croisement (planning RH, logs, horaires) | Haute : apporte le contexte ordre/statut/quantité nécessaire à l'analyse métier |
+| logs_machines.log | Texte semi-structuré | 30 000 lignes, 1,83 Mo fichier (~3,20 Mo en RAM après chargement) | Continue | 0 ligne vide, 1 doublon ; répartition INFO/WARN/ERROR exploitable ; parsing plus poussé à prévoir ensuite | Faible à moyen : pas d'email/téléphone/IP détectés, mais présence de marqueurs d'identifiants (user/employee/id/token) dans 425 lignes | Moyenne : utile pour corroborer les incidents, mais valeur dépendante du parsing |
 
 ## 4. Recommandations
 
-- Prioriser l'ingestion de capteurs_iot.csv et erp_export.json: c'est le meilleur ratio valeur metier / effort immediat.
-- Integrer logs_machines.log en phase 2: utile, mais la valeur depend d'un travail de parsing et de normalisation qui n'est pas necessaire pour demarrer.
-- Traiter les doublons IoT avant usage modele (1 000 lignes) et monitorer la qualite du champ vibration_mms (1,47% manquants).
-- Encadrer strictement l'usage de ouvrier_id: ne le conserver que si la finalite metier le justifie; sinon pseudonymisation renforcee (hachage) et minimisation des acces.
-- Mettre en place un controle qualite simple a l'ingestion (manquants, doublons, format de date, distribution des statuts) pour eviter la degradation silencieuse des donnees.
+- Prioriser l'ingestion de capteurs_iot.csv et erp_export.json : c'est le meilleur ratio valeur métier / effort immédiat.
+- Intégrer logs_machines.log en phase 2 : utile, mais la valeur dépend d'un travail de parsing et de normalisation qui n'est pas nécessaire pour démarrer.
+- Traiter les doublons IoT avant usage modèle (1 000 lignes) et monitorer la qualité du champ vibration_mms (1,47% manquants).
+- Encadrer strictement l'usage de ouvrier_id : ne le conserver que si la finalité métier le justifie ; sinon pseudonymisation renforcée (hachage) et minimisation des accès.
+- Mettre en place un contrôle qualité simple à l'ingestion (manquants, doublons, format de date, distribution des statuts) pour éviter la dégradation silencieuse des données.
 
-## 5. Points a clarifier avec Sebastien
+## 5. Points à clarifier avec Sébastien
 
-1. Quel est le rythme reel de mise a jour de l'export ERP (journalier, pluri-journalier, hebdomadaire) et son delai de disponibilite?
-2. Quel KPI prioritaire doit etre optimise en premier (taux de non-conformite, rebuts, arrets, delai de detection)?
-3. Le champ ouvrier_id est-il reellement necessaire a la prediction ou seulement utile pour l'explication operationnelle?
-4. Existe-t-il un dictionnaire de donnees officiel (definitions statut, line_id, regles de saisie ERP)?
-5. Le format des logs machines est-il stable dans le temps ou susceptible de changer selon version systeme/atelier?
+1. Quel est le rythme réel de mise à jour de l'export ERP (journalier, pluri-journalier, hebdomadaire) et son délai de disponibilité ?
+2. Quel KPI prioritaire doit être optimisé en premier (taux de non-conformité, rebuts, arrêts, délai de détection) ?
+3. Le champ ouvrier_id est-il réellement nécessaire à la prédiction ou seulement utile pour l'explication opérationnelle ?
+4. Existe-t-il un dictionnaire de données officiel (définitions statut, line_id, règles de saisie ERP) ?
+5. Le format des logs machines est-il stable dans le temps ou susceptible de changer selon version système/atelier ?
 
 ## 6. Limites de cette note
 
 - Cette note couvre l'identification et la priorisation des sources, pas une EDA statistique approfondie.
-- Aucune AIPD juridique formelle n'a ete realisee; une validation DPO reste necessaire avant industrialisation multi-sources.
-- Aucun test de performance modele n'a ete conduit avec ces nouvelles sources; l'impact reel devra etre mesure en phase d'integration.
-- La frequence exacte de certaines sources (notamment ERP) reste a confirmer avec les equipes Acerox.
+- Aucune AIPD juridique formelle n'a été réalisée ; une validation DPO reste nécessaire avant industrialisation multi-sources.
+- Aucun test de performance modèle n'a été conduit avec ces nouvelles sources ; l'impact réel devra être mesuré en phase d'intégration.
+- La fréquence exacte de certaines sources (notamment ERP) reste à confirmer avec les équipes Acerox.
 
 ---
 
-Note produite par Theo, 30/06/2026, dans le cadre du brief M3-B1 ATOS.
+Note produite par Théo, 30/06/2026, dans le cadre du brief M3-B1 ATOS.

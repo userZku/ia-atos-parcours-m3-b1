@@ -12,11 +12,11 @@
 
 ```mermaid
 flowchart LR
-    %% Sources identifiees en M3-B1
-    SRC_IOT[📡 capteurs_iot.csv<br/>CSV<br/>51 000 lignes, 7 colonnes<br/>Frequence continue]
-    SRC_ERP[📋 erp_export.json<br/>JSON<br/>2 000 lignes, 9 colonnes<br/>Frequence batch a confirmer]
-    SRC_LOG[📝 logs_machines.log<br/>Texte semi-structure<br/>30 000 lignes<br/>Frequence continue]
-    SRC_PDF[📄 rapports_maintenance.pdf<br/>Bonus potentiel<br/>non integre en M3-B1]
+    %% Sources identifiées en M3-B1
+    SRC_IOT[📡 capteurs_iot.csv<br/>CSV<br/>51 000 lignes, 7 colonnes<br/>Fréquence continue]
+    SRC_ERP[📋 erp_export.json<br/>JSON<br/>2 000 lignes, 9 colonnes<br/>Fréquence batch à confirmer]
+    SRC_LOG[📝 logs_machines.log<br/>Texte semi-structuré<br/>30 000 lignes<br/>Fréquence continue]
+    SRC_PDF[📄 rapports_maintenance.pdf<br/>Bonus potentiel<br/>non intégré en M3-B1]
 
     INGEST[🔄 Ingestion<br/>à concevoir en M3-B2]
     BDD[(🗄️ BDD pivot<br/>SQLite)]
@@ -25,7 +25,7 @@ flowchart LR
     SRC_IOT -->|mesures machine| INGEST
     SRC_ERP -->|ordres + statut| INGEST
     SRC_LOG -->|events INFO/WARN/ERROR| INGEST
-    SRC_PDF -.->|extraction OCR/NLP a etudier| INGEST
+    SRC_PDF -.->|extraction OCR/NLP à étudier| INGEST
     INGEST -->|normalisation + dédup| BDD
     BDD -->|consommée par| MODEL
 
@@ -42,18 +42,18 @@ flowchart LR
 > Reformule en 5 lignes max ce que le schéma raconte (qui produit quelle
 > donnée, qui consomme, contraintes critiques).
 
-- **Producteurs** : capteurs atelier (IoT), systeme ERP, systeme de logs machines.
-- **Consommateur final** : modele existant Acerox de prediction des defauts qualite, alimente via la BDD pivot.
-- **Contraintes frequence** : IoT et logs en continu, ERP en batch (cadence exacte a confirmer).
-- **Contraintes qualite** : doublons IoT, valeurs manquantes sur `vibration_mms` et `ouvrier_id`, logs a parser proprement.
-- **Contraintes RGPD** : risque indirect de re-identification via `ouvrier_id` en croisement multisources.
+- **Producteurs** : capteurs atelier (IoT), système ERP, système de logs machines.
+- **Consommateur final** : modèle existant Acerox de prédiction des défauts qualité, alimenté via la BDD pivot.
+- **Contraintes fréquence** : IoT et logs en continu, ERP en batch (cadence exacte à confirmer).
+- **Contraintes qualité** : doublons IoT, valeurs manquantes sur `vibration_mms` et `ouvrier_id`, logs à parser proprement.
+- **Contraintes RGPD** : risque indirect de ré-identification via `ouvrier_id` en croisement multisources.
 
 ## Décisions associées
 
 - Source(s) retenues en priorité : `capteurs_iot.csv` et `erp_export.json`.
-- Source(s) écartées : aucune source completement ecartee; `logs_machines.log` est reportee en phase 2.
-- Source bonus (PDF) traitée ? non, car hors perimetre M3-B1 et necessite une extraction textuelle specifique.
+- Source(s) écartées : aucune source complètement écartée ; `logs_machines.log` est reportée en phase 2.
+- Source bonus (PDF) traitée ? non, car hors périmètre M3-B1 et nécessite une extraction textuelle spécifique.
 
 ---
 
-*Schéma produit par Theo, 30/06/2026, dans le cadre du brief M3-B1 ATOS.*
+*Schéma produit par Théo, 30/06/2026, dans le cadre du brief M3-B1 ATOS.*
