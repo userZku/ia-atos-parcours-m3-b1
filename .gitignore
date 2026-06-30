@@ -22,3 +22,6 @@ Thumbs.db
 #data/*.log
 #data/*.zip
 !data/.gitkeep
+
+# chromaDB
+notebooks/chroma_acerox/
