@@ -23,11 +23,13 @@ Ce que je comprends qu'il cherche vraiment : améliorer la prise de décision op
 | capteurs_iot.csv | CSV | 51 000 lignes, 7 colonnes, ~10,59 Mo en RAM | Continue (mesures horodatées sur la période fournie) | Qualité globalement bonne ; 749 valeurs manquantes sur vibration_mms (1,47%) ; 1 000 doublons exacts | Faible à moyen : pas de donnée personnelle directe, mais identifiants techniques (sensor_id, line_id) recoupables avec d'autres sources | Haute : source la plus directement liée aux conditions machine et aux défauts |
 | erp_export.json | JSON | 2 000 lignes, 9 colonnes, ~0,74 Mo en RAM | Batch (rythme exact à confirmer, probablement quotidien) | Structure cohérente ; 109 valeurs manquantes sur ouvrier_id (5,45%) | Moyen : ouvrier_id est pseudonymisé mais potentiellement ré-identifiable par croisement (planning RH, logs, horaires) | Haute : apporte le contexte ordre/statut/quantité nécessaire à l'analyse métier |
 | logs_machines.log | Texte semi-structuré | 30 000 lignes, 1,83 Mo fichier (~3,20 Mo en RAM après chargement) | Continue | 0 ligne vide, 1 doublon ; répartition INFO/WARN/ERROR exploitable ; parsing plus poussé à prévoir ensuite | Faible à moyen : pas d'email/téléphone/IP détectés, mais présence de marqueurs d'identifiants (user/employee/id/token) dans 425 lignes | Moyenne : utile pour corroborer les incidents, mais valeur dépendante du parsing |
+| rapports_techniques_2024/*.md | Markdown non structuré | 5 rapports, 45 lignes, ~2,8 Ko | Ponctuelle / événementielle (production de rapports après incident ou dérive) | Corpus court, homogène et lisible ; métadonnées déjà présentes dans l'en-tête (référence, site, ligne, date) ; nécessite segmentation pour recherche sémantique | Moyen : présence d'identifiants de personnel dans le texte libre (ex. responsable `EMP-2424`) et risque de recoupement avec ERP/logs | Moyenne : utile pour l'aide au diagnostic humain et la capitalisation des incidents, moins prioritaire pour la prédiction tabulaire |
 
 ## 4. Recommandations
 
 - Prioriser l'ingestion de capteurs_iot.csv et erp_export.json : c'est le meilleur ratio valeur métier / effort immédiat.
 - Intégrer logs_machines.log en phase 2 : utile, mais la valeur dépend d'un travail de parsing et de normalisation qui n'est pas nécessaire pour démarrer.
+- Positionner les rapports techniques comme source complémentaire de connaissance : pertinents pour un moteur de recherche sémantique ou une aide au diagnostic, mais pas prioritaires pour enrichir directement le modèle tabulaire actuel.
 - Traiter les doublons IoT avant usage modèle (1 000 lignes) et monitorer la qualité du champ vibration_mms (1,47% manquants).
 - Encadrer strictement l'usage de ouvrier_id : ne le conserver que si la finalité métier le justifie ; sinon pseudonymisation renforcée (hachage) et minimisation des accès.
 - Mettre en place un contrôle qualité simple à l'ingestion (manquants, doublons, format de date, distribution des statuts) pour éviter la dégradation silencieuse des données.
@@ -39,6 +41,7 @@ Ce que je comprends qu'il cherche vraiment : améliorer la prise de décision op
 3. Le champ ouvrier_id est-il réellement nécessaire à la prédiction ou seulement utile pour l'explication opérationnelle ?
 4. Existe-t-il un dictionnaire de données officiel (définitions statut, line_id, règles de saisie ERP) ?
 5. Le format des logs machines est-il stable dans le temps ou susceptible de changer selon version système/atelier ?
+6. Les rapports techniques sont-ils produits de manière systématique après chaque incident, ou seulement sur certains cas jugés critiques ?
 
 ## 6. Limites de cette note
 
