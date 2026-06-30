@@ -5,6 +5,19 @@
 > `M3-B1-<client>-<prénom>` sur **ton** compte GitHub personnel (le nom
 > du client te sera révélé mardi 9h).
 
+## 📌 Navigation rapide
+
+### Livrables principaux
+
+- [Note d'identification des sources](./identification_sources.md)
+- [Schéma des flux de données (Mermaid)](./flux_donnees.md)
+- [Notes d'entretien client](./notes_entretien.md)
+
+### Notebook d'exploration
+
+- [Notebook EDA (version travaillée)](./notebooks/M3-B1_theo.ipynb)
+- [Notebook template initial](./notebooks/M3-B1_template.ipynb)
+
 ---
 
 ## 🚀 Démarrage (4 commandes)
